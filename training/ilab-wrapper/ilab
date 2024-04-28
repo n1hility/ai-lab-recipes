@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# HF caching uses relative symlink structures, so keep cache relative to
+# the central working directory
+CONTAINER_CACHE="/instructlab/cache"
+HOST_CACHE="$(pwd)/cache"
+WORKDIR="$(pwd)"
+mkdir -p "$HOST_CACHE"
+PODMAN_COMMAND=("podman" "run" "--rm" "-it" "--device" "nvidia.com/gpu=all" \
+	        "--security-opt" "label=disable" "--net" "host" \
+		"-v" "$WORKDIR:/instructlab" "--entrypoint" "" \
+		"-e" "HF_HOME=$CONTAINER_CACHE" \
+		"quay.io/ai-lab/instructlab-nvidia:latest")
+if [[ "$1" = "init" ]]; then
+	shift
+	"${PODMAN_COMMAND[@]}" ilab init \
+		--repository https://github.com/instructlab/taxonomy.git "$@"
+else
+	"${PODMAN_COMMAND[@]}" ilab "$@"
+fi

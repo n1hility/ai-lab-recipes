@@ -3,6 +3,7 @@ FROM ?=
 REGISTRY ?= quay.io
 REGISTRY_ORG ?= ai-lab
 IMAGE_NAME ?= nvidia-bootc
+SSH_IMAGE_NAME ?= nvidia-bootc-custom
 IMAGE_TAG ?= latest
 DTK_IMAGE_NAME ?= nvidia-builder
 DTK_IMAGE_TAG ?= latest
@@ -39,7 +40,7 @@ dtk:
 		.
 
 .PHONY: image
-image: check-sshkey prepare-files
+image: prepare-files dtk
 	"${CONTAINER_TOOL}" build \
 		--security-opt label=disable \
 		--cap-add SYS_ADMIN \
@@ -61,6 +62,18 @@ image: check-sshkey prepare-files
 		--build-arg "SSHPUBKEY=$(SSH_PUBKEY)" \
 		${CONTAINER_TOOL_EXTRA_ARGS} \
 		.
+
+.PHONY: image-ssh
+image-ssh: image check-sshkey
+	"${CONTAINER_TOOL}" build \
+		--security-opt label=disable \
+		--cap-add SYS_ADMIN \
+		--from "${REGISTRY}/${REGISTRY_ORG}/${IMAGE_NAME}:${IMAGE_TAG}" \
+		$(ARCH:%=--platform linux/%) \
+		--file ../common/Containerfile.sshkey \
+		--tag "${REGISTRY}/${REGISTRY_ORG}/${SSH_IMAGE_NAME}:${IMAGE_TAG}" \
+		--build-arg "SSHPUBKEY=$(SSH_PUBKEY)" \
+		${CONTAINER_TOOL_EXTRA_ARGS} \
 
 .PHONY: push
 push:

@@ -123,15 +123,6 @@ RUN if [ "${TARGET_ARCH}" == "" ]; then \
     && ln -s /usr/lib/systemd/system/nvidia-toolkit-firstboot.service /usr/lib/systemd/system/basic.target.wants/nvidia-toolkit-firstboot.service \
     && echo "blacklist nouveau" > /etc/modprobe.d/blacklist_nouveau.conf
 
-
-ARG SSHPUBKEY
-
-# The --build-arg "SSHPUBKEY=$(cat ~/.ssh/id_rsa.pub)" option inserts your
-# public key into the image, allowing root access via ssh.
-RUN set -eu; mkdir -p /usr/ssh && \
-    echo 'AuthorizedKeysFile /usr/ssh/%u.keys .ssh/authorized_keys .ssh/authorized_keys2' >> /etc/ssh/sshd_config.d/30-auth-system.conf && \
-    echo ${SSHPUBKEY} > /usr/ssh/root.keys && chmod 0600 /usr/ssh/root.keys
-
 # Setup /usr/lib/containers/storage as an additional store for images.
 # Remove once the base images have this set by default.
 # Also make sure not to duplicate if a base image already has it specified.

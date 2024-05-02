@@ -18,7 +18,7 @@ ARCH ?=
 
 INSTRUCTLAB_IMAGE = $(REGISTRY)/$(REGISTRY_ORG)/instructlab-$(VENDOR):$(IMAGE_TAG)
 VLLM_IMAGE = $(REGISTRY)/$(REGISTRY_ORG)/vllm:$(IMAGE_TAG)
-TRAIN_IMAGE = $(REGISTRY)/$(REGISTRY_ORG)/deepspeed_trainer:$(IMAGE_TAG)
+TRAIN_IMAGE = $(REGISTRY)/$(REGISTRY_ORG)/deepspeed-trainer:$(IMAGE_TAG)
 INSTRUCTLAB_IMAGE_ID = $(shell $(CONTAINER_TOOL) image inspect $(INSTRUCTLAB_IMAGE) --format {{.Id}})
 VLLM_IMAGE_ID = $(shell $(CONTAINER_TOOL) image inspect $(VLLM_IMAGE) --format {{.Id}})
 TRAIN_IMAGE_ID = $(shell $(CONTAINER_TOOL) image inspect $(TRAIN_IMAGE) --format {{.Id}})
